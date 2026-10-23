@@ -1,5 +1,6 @@
 import Movie from '../models/Movie.js';
 import Show from '../models/Show.js';
+import Booking from '../models/Booking.js';
 import { asyncHandler, httpError } from '../middleware/error.js';
 
 export const listMovies = asyncHandler(async (req, res) => {
@@ -27,8 +28,13 @@ export const updateMovie = asyncHandler(async (req, res) => {
 });
 
 export const deleteMovie = asyncHandler(async (req, res) => {
-  const movie = await Movie.findByIdAndDelete(req.params.id);
+  const movie = await Movie.findById(req.params.id);
   if (!movie) httpError(res, 404, 'Movie not found');
-  await Show.deleteMany({ movie: movie._id });
+  const shows = await Show.find({ movie: movie._id }).select('_id');
+  await Promise.all([
+    Show.deleteMany({ movie: movie._id }),
+    Booking.deleteMany({ show: { $in: shows.map((show) => show._id) } }),
+    Movie.deleteOne({ _id: movie._id }),
+  ]);
   res.json({ message: 'Movie deleted' });
 });

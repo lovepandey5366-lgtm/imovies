@@ -1,5 +1,6 @@
 import Theatre from '../models/Theatre.js';
 import Show from '../models/Show.js';
+import Booking from '../models/Booking.js';
 import { asyncHandler, httpError } from '../middleware/error.js';
 
 export const listTheatres = asyncHandler(async (_req, res) => {
@@ -17,8 +18,13 @@ export const updateTheatre = asyncHandler(async (req, res) => {
 });
 
 export const deleteTheatre = asyncHandler(async (req, res) => {
-  const theatre = await Theatre.findByIdAndDelete(req.params.id);
+  const theatre = await Theatre.findById(req.params.id);
   if (!theatre) httpError(res, 404, 'Theatre not found');
-  await Show.deleteMany({ theatre: theatre._id });
+  const shows = await Show.find({ theatre: theatre._id }).select('_id');
+  await Promise.all([
+    Show.deleteMany({ theatre: theatre._id }),
+    Booking.deleteMany({ show: { $in: shows.map((show) => show._id) } }),
+    Theatre.deleteOne({ _id: theatre._id }),
+  ]);
   res.json({ message: 'Theatre deleted' });
 });

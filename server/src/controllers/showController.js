@@ -1,4 +1,5 @@
 import Show from '../models/Show.js';
+import Booking from '../models/Booking.js';
 import Movie from '../models/Movie.js';
 import Theatre from '../models/Theatre.js';
 import { asyncHandler, httpError } from '../middleware/error.js';
@@ -11,7 +12,8 @@ const populate = [
 export const listShows = asyncHandler(async (req, res) => {
   const filter = {};
   if (req.query.movie) filter.movie = req.query.movie;
-  if (req.query.all !== 'true') filter.startTime = { $gte: new Date() };
+  const includeAll = String(req.query.all ?? '').toLowerCase() === 'true';
+  if (!includeAll) filter.startTime = { $gte: new Date() };
   res.json(await Show.find(filter).populate(populate).sort({ startTime: 1 }));
 });
 
@@ -30,7 +32,11 @@ export const createShow = asyncHandler(async (req, res) => {
 });
 
 export const deleteShow = asyncHandler(async (req, res) => {
-  const show = await Show.findByIdAndDelete(req.params.id);
+  const show = await Show.findById(req.params.id);
   if (!show) httpError(res, 404, 'Show not found');
+  await Promise.all([
+    Show.deleteOne({ _id: show._id }),
+    Booking.deleteMany({ show: show._id }),
+  ]);
   res.json({ message: 'Show deleted' });
 });

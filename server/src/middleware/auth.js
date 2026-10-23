@@ -4,7 +4,8 @@ import { asyncHandler, httpError } from './error.js';
 
 export const protect = asyncHandler(async (req, res, next) => {
   const header = req.headers.authorization || '';
-  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+  const match = /^Bearer\s+/i.exec(header);
+  const token = match ? header.slice(match[0].length) : null;
   if (!token) httpError(res, 401, 'Please sign in to continue');
   let payload;
   try {
