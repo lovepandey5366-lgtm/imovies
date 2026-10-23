@@ -1,4 +1,4 @@
-# IMovies: Movie ticket booking made simple
+IMovies: Movie ticket booking made simple
 
 A full-stack **MERN** app (MongoDB, Express, React, Node.js) where users browse movies, pick a showtime, choose seats on a live seat map, book tickets, and view or cancel bookings. Admins manage movies, theatres, and shows.
 
@@ -11,7 +11,7 @@ imovies/
 └── package.json  Helper scripts
 ```
 
-## Features
+ Features
 - Browse, search, and filter movies by genre
 - Showtimes grouped by day, with theatre and price
 - Interactive seat map; taken seats are locked, and double-booking is blocked atomically on the server
@@ -21,29 +21,15 @@ imovies/
 
 Full list, roles, and flows: see [`docs/`](docs/).
 
-## Run locally
+Run locally
 Requirements: Node 18+, a MongoDB database (free [MongoDB Atlas](https://www.mongodb.com/atlas) cluster, or local MongoDB).
-
-```bash
-git clone <your-repo-url> && cd imovies
-npm run install:all
-
-# 1. Server
-cp server/.env.example server/.env      # then edit MONGO_URI and JWT_SECRET
-npm run seed                            # sample movies/theatres/shows + admin user
-npm run dev:server                      # http://localhost:5000
-
-# 2. Client (new terminal)
-cp client/.env.example client/.env
-npm run dev:client                      # http://localhost:5173
-```
 
 Admin login after seeding: `admin@imovies.com` / `Admin@123` (change via `ADMIN_EMAIL` / `ADMIN_PASSWORD` in `server/.env` before seeding).
 
-## Publish online for free (no domain needed)
+Publish online for free (no domain needed)
 Frontend on **Vercel** (`*.vercel.app`), backend on **Render** (`*.onrender.com`), database on **MongoDB Atlas**. Step-by-step guide: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
-## API summary
+API summary
 | Method | Route | Access |
 |---|---|---|
 | POST | `/api/auth/register`, `/api/auth/login` | Public |
