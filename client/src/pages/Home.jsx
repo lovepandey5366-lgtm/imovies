@@ -22,7 +22,7 @@ export default function Home() {
     return () => clearTimeout(t);
   }, [q, genre]);
 
-  const genres = ['Thriller', 'Romance', 'Comedy', 'Drama', 'Sci-Fi', 'Horror', 'Adventure', 'Sports'];
+  const genres = ['Action', 'Sci-Fi', 'Drama', 'Thriller', 'Adventure', 'Animation', 'Comedy', 'Romance'];
 
   return (
     <main className="page">
