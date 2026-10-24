@@ -27,8 +27,9 @@ export default function Home() {
   return (
     <main className="page">
       <section className="hero">
+        <span className="hero-badge">🎬 Now Showing in Theatres</span>
         <h1>Pick a film.<br />Pick your seat.</h1>
-        <p>Browse what is playing near you and book tickets in under a minute.</p>
+        <p>Browse blockbuster titles playing near you and book tickets in seconds.</p>
         <div className="search">
           <input type="search" placeholder="Search by movie title" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search movies" />
         </div>
