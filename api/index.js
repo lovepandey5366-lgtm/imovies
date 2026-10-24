@@ -8,13 +8,31 @@ import showRoutes from '../server/src/routes/showRoutes.js';
 import bookingRoutes from '../server/src/routes/bookingRoutes.js';
 import { notFound, errorHandler } from '../server/src/middleware/error.js';
 
-let isConnected = false;
+let cached = global.mongoose;
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
 const connectDB = async () => {
-  if (isConnected && mongoose.connection.readyState >= 1) return;
+  if (cached.conn && mongoose.connection.readyState >= 1) {
+    return cached.conn;
+  }
   const uri = process.env.MONGO_URI;
-  if (!uri) throw new Error('MONGO_URI is not set');
-  await mongoose.connect(uri);
-  isConnected = true;
+  if (!uri) {
+    throw new Error('MONGO_URI environment variable is not defined in Vercel settings');
+  }
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 10000,
+    }).then((m) => m);
+  }
+  try {
+    cached.conn = await cached.promise;
+    return cached.conn;
+  } catch (err) {
+    cached.promise = null;
+    throw err;
+  }
 };
 
 const app = express();
@@ -31,7 +49,7 @@ app.use(async (_req, res, next) => {
   }
 });
 
-app.get('/api', (_req, res) => res.json({ name: 'IMovies API (Vercel)', status: 'ok' }));
+app.get('/api', (_req, res) => res.json({ name: 'IMovies API', status: 'ok' }));
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
 
 app.use('/api/auth', authRoutes);
