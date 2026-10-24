@@ -138,3 +138,6 @@ The repository is configured for **All-in-One Full-Stack Deployment on Vercel**:
 * **Database & ODM**: MongoDB Atlas, Mongoose 8 (cached serverless connections)
 * **Authentication**: JSON Web Tokens (`jsonwebtoken`), `bcryptjs`
 * **Typography**: Bricolage Grotesque, Instrument Sans
+
+  Video for better Understanding
+  https://www.loom.com/share/2bc45893ad3248e0acc8e6a5813e227c
